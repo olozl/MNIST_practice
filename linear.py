@@ -61,7 +61,7 @@ with tf.Session() as sess:
 	
     # Print confusion matrix
     cm_true = np.argmax(mnist.test.labels, 1)
-    cm_pred = sess.run(tf.argmax(Y, 1), 
+    cm_pred = sess.run(tf.argmax(pred, 1), 
 		feed_dict={X: mnist.test.images, Y: mnist.test.labels})
     cm = confusion_matrix(y_true = cm_true, y_pred = cm_pred)
     print(cm)
