@@ -17,8 +17,8 @@ training_epochs = 70
 batch_size = 100
 X = tf.placeholder("float", [None, 784])
 Y = tf.placeholder("float", [None, 10])
-weights = tf.Variable(tf.random_normal([784, 10]))
-biases = tf.Variable(tf.random_normal([10]))
+weights = tf.Variable(tf.zeros([784, 10]))
+biases = tf.Variable(tf.zeros([10]))
 
 func = tf.matmul(X, weights) + biases
 pred = tf.nn.softmax(func)  
@@ -34,13 +34,16 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 
 # Initialize variables
 init = tf.global_variables_initializer()
-# plt.imshow(mnist.train.images[0].reshape((28,28)), cmap='gray')
-# plt.title('Model accuracy')
-# plt.xlabel('Epoch')
-# plt.ylabel('Accuracy')
-# plt.savefig('plot1.png')
 
-# plt.ion()
+'''
+plt.imshow(mnist.train.images[0].reshape((28,28)), cmap='gray')
+plt.title('Model accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.savefig('plot1.png')
+
+plt.ion()
+'''
 
 with tf.Session() as sess:
     sess.run(init)
@@ -49,13 +52,13 @@ with tf.Session() as sess:
     for epoch in range(training_epochs):
         for i in range(10000):
             batch_x, batch_y = mnist.train.next_batch(batch_size)
-            sess.run(train_step, feed_dict={X: batch_x, Y: batch_y})
-        train_accuracy = sess.run(accuracy, 
-		feed_dict={X: mnist.train.images, Y: mnist.train.labels})
-	    
-        print("Epoc: %d, Train accuracy: %.4f, Test accuracy: %.4f" 
-			% (epoch+1, train_accuracy, test_accuracy))
-
+            _, train_accuracy = sess.run([train_step, accuracy],
+		feed_dict={X: batch_x, Y: batch_y})
+        test_accuracy = sess.run(accuracy, 
+	    feed_dict={X: mnist.test.images, Y: mnist.test.labels})
+        print("Epoch: %d, Train accuracy: %.4f, Test accuracy: %.4f" 
+            % (epoch+1, train_accuracy, test_accuracy))
+	
     # Print confusion matrix
     cm_true = np.argmax(mnist.test.labels, 1)
     cm_pred = sess.run(tf.argmax(Y, 1), 
@@ -63,5 +66,7 @@ with tf.Session() as sess:
     cm = confusion_matrix(y_true = cm_true, y_pred = cm_pred)
     print(cm)
 
-# plt.savefig('plot2.png')
-# plt.ioff()
+'''
+plt.savefig('plot2.png')
+plt.ioff()
+'''
