@@ -14,8 +14,8 @@ These programs are to classify the handwritten digits in the MNIST dataset using
 
 References
 
-MNIST dataset http://yann.lecun.com/exdb/mnist/
-TensorFlow https://www.tensorflow.org/
+1. MNIST dataset http://yann.lecun.com/exdb/mnist/
+2. TensorFlow https://www.tensorflow.org/
 
 Contact Me
 
