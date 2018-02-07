@@ -34,13 +34,13 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 
 # Initialize variables
 init = tf.global_variables_initializer()
-plt.imshow(mnist.train.images[0].reshape((28,28)), cmap='gray')
-plt.title('Model accuracy')
-plt.xlabel('Epoch')
-plt.ylabel('Accuracy')
-plt.savefig('plot1.png')
+# plt.imshow(mnist.train.images[0].reshape((28,28)), cmap='gray')
+# plt.title('Model accuracy')
+# plt.xlabel('Epoch')
+# plt.ylabel('Accuracy')
+# plt.savefig('plot1.png')
 
-plt.ion()
+# plt.ion()
 
 with tf.Session() as sess:
     sess.run(init)
@@ -63,5 +63,5 @@ with tf.Session() as sess:
     cm = confusion_matrix(y_true = cm_true, y_pred = cm_pred)
     print(cm)
 
-plt.savefig('plot2.png')
-plt.ioff()
+# plt.savefig('plot2.png')
+# plt.ioff()
