@@ -12,7 +12,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 
 # Parameters
-learning_rate = 0.001
+learning_rate = 0.001 # 0.01 # 0.1
 training_epochs = 70
 batch_size = 100
 X = tf.placeholder("float", [None, 784])
