@@ -2,7 +2,7 @@ Machine Learning Algorithm practice
 
 Copyright (c) 2018 Zoey Lee
 
-The programs are studying purpose for myself to understand Neural Network better with MNIST dataset. 
+The programs are written for studying purposes to understand Neural Network better with MNIST dataset. 
 
 Description
 
