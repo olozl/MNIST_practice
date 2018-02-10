@@ -12,13 +12,13 @@ import numpy as np
 from sklearn.metrics import confusion_matrix
 
 # Parameters
-learning_rate = 0.001 # 0.01 # 0.1
+learning_rate = 0.001
 training_epochs = 70
 batch_size = 100
 X = tf.placeholder("float", [None, 784])
 Y = tf.placeholder("float", [None, 10])
-weights = tf.Variable(tf.zeros([784, 10]))
-biases = tf.Variable(tf.zeros([10]))
+weights = tf.Variable(tf.truncated_normal([784, 10], stddev=0.05))
+biases = tf.Variable(tf.truncated_normal([10]))
 
 func = tf.matmul(X, weights) + biases
 pred = tf.nn.softmax(func)  
@@ -34,17 +34,6 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 
 # Initialize variables
 init = tf.global_variables_initializer()
-
-'''
-plt.imshow(mnist.train.images[0].reshape((28,28)), cmap='gray')
-plt.title('Model accuracy')
-plt.xlabel('Epoch')
-plt.ylabel('Accuracy')
-plt.savefig('plot1.png')
-
-plt.ion()
-'''
-
 with tf.Session() as sess:
     sess.run(init)
 
@@ -58,6 +47,8 @@ with tf.Session() as sess:
 	    feed_dict={X: mnist.test.images, Y: mnist.test.labels})
         print("Epoch: %d, Train accuracy: %.4f, Test accuracy: %.4f" 
             % (epoch+1, train_accuracy, test_accuracy))
+        plt.plot(epoch, train_accuracy*100, 'r-')
+        plt.plot(epoch, test_accuracy*100, 'k-')
 	
     # Print confusion matrix
     cm_true = np.argmax(mnist.test.labels, 1)
@@ -66,7 +57,9 @@ with tf.Session() as sess:
     cm = confusion_matrix(y_true = cm_true, y_pred = cm_pred)
     print(cm)
 
-'''
-plt.savefig('plot2.png')
-plt.ioff()
-'''
+    # Plot accuracy
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.axis([0, 100, 0, 1000])
+    plt.legend()
+    plt.savefig('plot1.png')
