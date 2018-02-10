@@ -47,8 +47,8 @@ with tf.Session() as sess:
 	    feed_dict={X: mnist.test.images, Y: mnist.test.labels})
         print("Epoch: %d, Train accuracy: %.4f, Test accuracy: %.4f" 
             % (epoch+1, train_accuracy, test_accuracy))
-        plt.plot(epoch, train_accuracy*100, 'r-')
-        plt.plot(epoch, test_accuracy*100, 'k-')
+        plt.plot(epoch, train_accuracy*100, 'ro')
+        plt.plot(epoch, test_accuracy*100, 'ko')
 	
     # Print confusion matrix
     cm_true = np.argmax(mnist.test.labels, 1)
