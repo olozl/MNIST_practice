@@ -17,20 +17,20 @@ training_epochs = 70
 batch_size = 100
 X = tf.placeholder("float", [None, 784])
 Y = tf.placeholder("float", [None, 10])
-weights = tf.Variable(tf.truncated_normal([784, 10], stddev=0.05))
-biases = tf.Variable(np.ones(10,), dtype=np.float32)
 
+weights = tf.Variable(tf.truncated_normal([784, 10], stddev=0.05))
+biases = tf.Variable(tf.ones([10]))
 func = tf.matmul(X, weights) + biases
 pred = tf.nn.softmax(func)  
 
 # Implement cross entropy function
-cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=Y))
+cross_entropy = -tf.reduce_sum(Y * tf.log(pred))
 
 # Minimize cross_entropy using gradient descent algorithm with learning rate
-optimizer = tf.train.GradientDescentOptimizer(learning_rate)
-train_step = optimizer.minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(Y, 1), tf.argmax(pred, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+train_step = optimizer.minimize(cross_entropy)
 
 # Initialize variables
 init = tf.global_variables_initializer()
@@ -42,19 +42,18 @@ with tf.Session() as sess:
     test_list=[]
     # Training 70 epochs
     for epoch in range(training_epochs+1):
-        for i in range(10000):
-            batch_x, batch_y = mnist.train.next_batch(batch_size)
-            sess.run(train_step,
+        batch_x, batch_y = mnist.train.next_batch(batch_size)
+        sess.run(train_step,
 		feed_dict={X: batch_x, Y: batch_y})
         train_accuracy = sess.run(accuracy, 
-	    feed_dict={X: mnist.train.images, Y: mnist.train.labels})
+		feed_dict={X: batch_x, Y: batch_y})
+        train_list.append(train_accuracy*100) 
         test_accuracy = sess.run(accuracy, 
-	    feed_dict={X: mnist.test.images, Y: mnist.test.labels})
+	        feed_dict={X: mnist.test.images, Y: mnist.test.labels})
+        test_list.append(test_accuracy*100) 
         print("Epoch: %d, Train accuracy: %.4f, Test accuracy: %.4f" 
             % (epoch, train_accuracy, test_accuracy))
        
-        train_list.append(train_accuracy*100) 
-        test_list.append(test_accuracy*100) 
 	
     # Print confusion matrix
     cm_true = np.argmax(mnist.test.labels, 1)
