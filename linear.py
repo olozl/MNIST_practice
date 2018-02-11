@@ -24,7 +24,8 @@ func = tf.matmul(X, weights) + biases
 pred = tf.nn.softmax(func)  
 
 # Implement cross entropy function
-cross_entropy = -tf.reduce_sum(Y * tf.log(pred))
+cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=func, labels=Y)
+#cross_entropy = -tf.reduce_sum(Y * tf.log(pred))
 
 # Minimize cross_entropy using gradient descent algorithm with learning rate
 correct_prediction = tf.equal(tf.argmax(Y, 1), tf.argmax(pred, 1))
@@ -47,12 +48,12 @@ with tf.Session() as sess:
 		feed_dict={X: batch_x, Y: batch_y})
         train_accuracy = sess.run(accuracy, 
 		feed_dict={X: batch_x, Y: batch_y})
-        train_list.append(train_accuracy*100) 
         test_accuracy = sess.run(accuracy, 
 	        feed_dict={X: mnist.test.images, Y: mnist.test.labels})
-        test_list.append(test_accuracy*100) 
         print("Epoch: %d, Train accuracy: %.4f, Test accuracy: %.4f" 
             % (epoch, train_accuracy, test_accuracy))
+        train_list.append(train_accuracy*100) 
+        test_list.append(test_accuracy*100) 
        
 	
     # Print confusion matrix
