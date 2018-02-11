@@ -24,8 +24,7 @@ func = tf.matmul(X, weights) + biases
 pred = tf.nn.softmax(func)  
 
 # Implement cross entropy function
-cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=func, labels=Y)
-#cross_entropy = -tf.reduce_sum(Y * tf.log(pred))
+cross_entropy = tf.reduce_mean(-tf.reduce_sum(Y*tf.log(pred), reduction_indices=1))
 
 # Minimize cross_entropy using gradient descent algorithm with learning rate
 correct_prediction = tf.equal(tf.argmax(Y, 1), tf.argmax(pred, 1))
@@ -38,22 +37,27 @@ init = tf.global_variables_initializer()
 
 with tf.Session() as sess:
     sess.run(init)
-    
-    train_list=[]
-    test_list=[]
+
+    train_list=[] 
+    test_list=[] 
     # Training 70 epochs
     for epoch in range(training_epochs+1):
-        batch_x, batch_y = mnist.train.next_batch(batch_size)
-        sess.run(train_step,
-		feed_dict={X: batch_x, Y: batch_y})
-        train_accuracy = sess.run(accuracy, 
-		feed_dict={X: batch_x, Y: batch_y})
-        test_accuracy = sess.run(accuracy, 
-	        feed_dict={X: mnist.test.images, Y: mnist.test.labels})
+	avg_train=0
+	avg_test=0
+	tot_batch=int(mnist.train.num_examples/batch_size)
+
+        for bc in range(tot_batch):
+	        batch_x, batch_y = mnist.train.next_batch(batch_size)
+	        _,train_accuracy = sess.run([train_step,accuracy], 
+			feed_dict={X: batch_x, Y: batch_y})
+		avg_train += train_accuracy / tot_batch
+	        test_accuracy = sess.run(accuracy, 
+		        feed_dict={X: mnist.test.images, Y: mnist.test.labels})
+		avg_test += test_accuracy / tot_batch
         print("Epoch: %d, Train accuracy: %.4f, Test accuracy: %.4f" 
-            % (epoch, train_accuracy, test_accuracy))
-        train_list.append(train_accuracy*100) 
-        test_list.append(test_accuracy*100) 
+            % (epoch+1, avg_train, avg_test))
+        train_list.append(avg_train*100) 
+        test_list.append(avg_test*100) 
        
 	
     # Print confusion matrix
@@ -66,7 +70,7 @@ with tf.Session() as sess:
     # Plot accuracy
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy')
-    plt.axis([0, 80, 0, 100])
+    plt.axis([0, 70, 0, 100])
     plt.plot(np.array(range(0,training_epochs+1)), np.array(train_list), 'r-', label='train')
     plt.plot(np.array(range(0,training_epochs+1)), np.array(test_list), 'k-', label='test')
     plt.show()
